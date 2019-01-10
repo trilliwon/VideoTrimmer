@@ -8,11 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		C2E8ADB221E3059500404BF5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E8ADB121E3059500404BF5 /* AppDelegate.swift */; };
-		C2E8ADB421E3059500404BF5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E8ADB321E3059500404BF5 /* ViewController.swift */; };
+		C2E8ADB421E3059500404BF5 /* PlayVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E8ADB321E3059500404BF5 /* PlayVideoViewController.swift */; };
 		C2E8ADB721E3059500404BF5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C2E8ADB521E3059500404BF5 /* Main.storyboard */; };
 		C2E8ADB921E3059600404BF5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C2E8ADB821E3059600404BF5 /* Assets.xcassets */; };
 		C2E8ADBC21E3059600404BF5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C2E8ADBA21E3059600404BF5 /* LaunchScreen.storyboard */; };
 		C2E8ADC721E3059600404BF5 /* VideoTrimmerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E8ADC621E3059600404BF5 /* VideoTrimmerTests.swift */; };
+		C2E8ADD221E305AF00404BF5 /* TrimmerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E8ADD121E305AF00404BF5 /* TrimmerView.swift */; };
+		C2E8ADD621E318C100404BF5 /* AssetVideoThumbnailScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E8ADD521E318C100404BF5 /* AssetVideoThumbnailScrollView.swift */; };
+		C2E8ADD821E32F4B00404BF5 /* VideoHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E8ADD721E32F4B00404BF5 /* VideoHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,7 +31,7 @@
 /* Begin PBXFileReference section */
 		C2E8ADAE21E3059500404BF5 /* VideoTrimmer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VideoTrimmer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2E8ADB121E3059500404BF5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		C2E8ADB321E3059500404BF5 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		C2E8ADB321E3059500404BF5 /* PlayVideoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayVideoViewController.swift; sourceTree = "<group>"; };
 		C2E8ADB621E3059500404BF5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		C2E8ADB821E3059600404BF5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C2E8ADBB21E3059600404BF5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -36,6 +39,9 @@
 		C2E8ADC221E3059600404BF5 /* VideoTrimmerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VideoTrimmerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2E8ADC621E3059600404BF5 /* VideoTrimmerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoTrimmerTests.swift; sourceTree = "<group>"; };
 		C2E8ADC821E3059600404BF5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C2E8ADD121E305AF00404BF5 /* TrimmerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmerView.swift; sourceTree = "<group>"; };
+		C2E8ADD521E318C100404BF5 /* AssetVideoThumbnailScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetVideoThumbnailScrollView.swift; sourceTree = "<group>"; };
+		C2E8ADD721E32F4B00404BF5 /* VideoHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,7 +84,10 @@
 			isa = PBXGroup;
 			children = (
 				C2E8ADB121E3059500404BF5 /* AppDelegate.swift */,
-				C2E8ADB321E3059500404BF5 /* ViewController.swift */,
+				C2E8ADB321E3059500404BF5 /* PlayVideoViewController.swift */,
+				C2E8ADD121E305AF00404BF5 /* TrimmerView.swift */,
+				C2E8ADD521E318C100404BF5 /* AssetVideoThumbnailScrollView.swift */,
+				C2E8ADD721E32F4B00404BF5 /* VideoHelper.swift */,
 				C2E8ADB521E3059500404BF5 /* Main.storyboard */,
 				C2E8ADB821E3059600404BF5 /* Assets.xcassets */,
 				C2E8ADBA21E3059600404BF5 /* LaunchScreen.storyboard */,
@@ -197,8 +206,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C2E8ADB421E3059500404BF5 /* ViewController.swift in Sources */,
+				C2E8ADB421E3059500404BF5 /* PlayVideoViewController.swift in Sources */,
 				C2E8ADB221E3059500404BF5 /* AppDelegate.swift in Sources */,
+				C2E8ADD821E32F4B00404BF5 /* VideoHelper.swift in Sources */,
+				C2E8ADD621E318C100404BF5 /* AssetVideoThumbnailScrollView.swift in Sources */,
+				C2E8ADD221E305AF00404BF5 /* TrimmerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -361,7 +373,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = J2WX5LW4CC;
 				INFOPLIST_FILE = VideoTrimmer/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -378,7 +392,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = J2WX5LW4CC;
 				INFOPLIST_FILE = VideoTrimmer/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
