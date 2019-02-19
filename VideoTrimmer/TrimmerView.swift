@@ -10,18 +10,25 @@ import AVFoundation
 import UIKit
 
 protocol TrimmerViewDelegate: class {
+    func willBeginChangePosition(to time: CMTime)
     func didChangePosition(to time: CMTime)
-    func didStopMovingPosition(at time: CMTime)
+    func didEndChangePosition(to time: CMTime)
 }
 
 final class TrimmerView: UIView {
 
     public weak var delegate: TrimmerViewDelegate?
 
-    public var asset: AVAsset? {
+    private var asset: AVAsset? {
         didSet {
             assetVideoThumbnailScrollView.asset = asset
+            guard let startTime = startTime else { return }
+            delegate?.didChangePosition(to: startTime)
         }
+    }
+
+    func changeAsset(to asset: AVAsset?) {
+        self.asset = asset
     }
 
     public var minDuration: Double = 1
@@ -64,7 +71,10 @@ final class TrimmerView: UIView {
         return scrollView
     }()
 
-    private let impactFeedback = UIImpactFeedbackGenerator(style: .heavy)
+    @available(iOS 10.0, *)
+    private var impactFeedback: UIImpactFeedbackGenerator {
+        return UIImpactFeedbackGenerator(style: .heavy)
+    }
 
     private var trimmerView: UIView = {
         let view = UIView()
@@ -77,19 +87,19 @@ final class TrimmerView: UIView {
         let view = HandlerView()
         view.backgroundColor = UIColor(red: 51 / 255, green: 51 / 255, blue: 51 / 255, alpha: 1)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.isUserInteractionEnabled = true
         return view
     }()
 
-    private var leftHandleKnobView: HandlerView = {
-        let view = HandlerView()
+    private var leftHandleKnobView: UIView = {
+        let view = UIView()
         view.backgroundColor = .white
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.isUserInteractionEnabled = false
         return view
     }()
 
-    private var rightHandleView: UIView = {
-        let view = UIView()
+    private var rightHandleView: HandlerView = {
+        let view = HandlerView()
         view.backgroundColor = UIColor(red: 51 / 255, green: 51 / 255, blue: 51 / 255, alpha: 1)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -99,6 +109,7 @@ final class TrimmerView: UIView {
         let view = UIView()
         view.backgroundColor = .white
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.isUserInteractionEnabled = false
         return view
     }()
 
@@ -307,9 +318,12 @@ final class TrimmerView: UIView {
                 currentPositionBarConstraintConstant = positionBarConstraint?.constant ?? 0
             }
 
-            impactFeedback.impactOccurred()
+            if #available(iOS 10.0, *) {
+                impactFeedback.impactOccurred()
+            }
+
             guard let playerTime = positionBarTime else { return }
-            delegate?.didStopMovingPosition(at: playerTime)
+            delegate?.willBeginChangePosition(to: playerTime)
 
         case .changed:
             let translation = recognizer.translation(in: superview)
@@ -327,12 +341,11 @@ final class TrimmerView: UIView {
             else if let endTime = endTime, view == rightHandleView { seek(to: endTime) }
 
             guard let playerTime = positionBarTime else { return }
-            delegate?.didStopMovingPosition(at: playerTime)
-            print(playerTime.seconds)
+            delegate?.didChangePosition(to: playerTime)
 
         case .cancelled, .ended, .failed:
             guard let playerTime = positionBarTime else { return }
-            delegate?.didChangePosition(to: playerTime)
+            delegate?.didEndChangePosition(to: playerTime)
 
         default:
             return
@@ -372,19 +385,24 @@ final class TrimmerView: UIView {
 
 extension TrimmerView: UIScrollViewDelegate {
 
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         guard let playerTime = positionBarTime else { return }
-        delegate?.didStopMovingPosition(at: playerTime)
-    }
-
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        guard let playerTime = positionBarTime, !decelerate else { return }
-        delegate?.didStopMovingPosition(at: playerTime)
+        delegate?.willBeginChangePosition(to: playerTime)
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard let playerTime = positionBarTime else { return }
         delegate?.didChangePosition(to: playerTime)
+    }
+
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        guard let playerTime = positionBarTime else { return }
+        delegate?.didEndChangePosition(to: playerTime)
+    }
+
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        guard let playerTime = positionBarTime, !decelerate else { return }
+        delegate?.didEndChangePosition(to: playerTime)
     }
 }
 

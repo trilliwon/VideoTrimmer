@@ -100,7 +100,7 @@ extension PlayVideoViewController: UIImagePickerControllerDelegate {
         playerView.layer.insertSublayer(playerLayer!, at: 0)
         playerLayer?.frame = playerView.bounds
         playerLayer?.layoutIfNeeded()
-        trimmerView.asset = playerItem.asset
+        trimmerView.changeAsset(to: playerItem.asset)
         NotificationCenter.default.addObserver(self, selector: #selector(itemDidFinishPlaying(_:)), name: .AVPlayerItemDidPlayToEndTime, object: playerItem)
 
     }
@@ -108,18 +108,20 @@ extension PlayVideoViewController: UIImagePickerControllerDelegate {
 
 extension PlayVideoViewController: TrimmerViewDelegate {
 
-    func didChangePosition(to time: CMTime) {
-        stopPlaybackTimeChecker()
+    func willBeginChangePosition(to time: CMTime) {
         playerLayer?.player?.pause()
+        stopPlaybackTimeChecker()
+    }
+
+    func didChangePosition(to time: CMTime) {
         playerLayer?.player?.seek(to: time, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero)
         let duration = (trimmerView.endTime! - trimmerView.startTime!).seconds
-        print(duration)
         rangeLabel.text = "\(String(format: "%.2f", duration))s"
     }
 
-    func didStopMovingPosition(at time: CMTime) {
-        playerLayer?.player?.seek(to: time, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero)
-//        startPlaybackTimeChecker()
+    func didEndChangePosition(to time: CMTime) {
+        playerLayer?.player?.play()
+        startPlaybackTimeChecker()
     }
 }
 

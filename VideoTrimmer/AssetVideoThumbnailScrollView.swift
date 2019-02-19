@@ -99,7 +99,7 @@ class AssetVideoThumbnailScrollView: UIScrollView {
                 thumbnailView.contentMode = .scaleAspectFill
             } else {
                 thumbnailView.frame.size = thumbnailSize
-                thumbnailView.contentMode = .scaleAspectFit
+                thumbnailView.contentMode = .scaleAspectFill
             }
 
             thumbnailView.frame.origin = CGPoint(x: CGFloat(index) * thumbnailSize.width, y: 0)
