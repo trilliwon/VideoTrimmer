@@ -26,7 +26,8 @@ class PlayVideoViewController: UIViewController {
     }
 
     @IBAction func playVideo(_ sender: UIButton) {
-        guard let player = playerLayer?.player, let bartime = trimmerView.positionBarTime else { return }
+        guard let player = playerLayer?.player else { return }
+        let bartime = trimmerView.positionBarTime
         player.play()
         player.seek(to: bartime)
         startPlaybackTimeChecker()
@@ -42,17 +43,10 @@ class PlayVideoViewController: UIViewController {
         stopPlaybackTimeChecker()
     }
 
-    @objc func itemDidFinishPlaying(_ notification: Notification) {
-        guard let player = playerLayer?.player else { return }
-        if let startTime = trimmerView.startTime {
-            player.seek(to: startTime)
-        }
-    }
-
     func startPlaybackTimeChecker() {
-
         stopPlaybackTimeChecker()
-        playbackTimeCheckerTimer = Timer.scheduledTimer(timeInterval: 1.0 / 30.0, target: self, selector: #selector(onPlaybackTimeChecker), userInfo: nil, repeats: true)
+        playbackTimeCheckerTimer = Timer.scheduledTimer(timeInterval: 1.0 / 60.0, target: self, selector: #selector(onPlaybackTimeChecker), userInfo: nil, repeats: true)
+        RunLoop.main.add(playbackTimeCheckerTimer!, forMode: .common)
     }
 
     func stopPlaybackTimeChecker() {
@@ -73,6 +67,7 @@ class PlayVideoViewController: UIViewController {
         if playBackTime >= endTime {
             player.seek(to: startTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero)
             trimmerView.seek(to: startTime)
+            player.pause()
         }
     }
 
@@ -101,12 +96,13 @@ extension PlayVideoViewController: UIImagePickerControllerDelegate {
         playerLayer?.frame = playerView.bounds
         playerLayer?.layoutIfNeeded()
         trimmerView.changeAsset(to: playerItem.asset)
-        NotificationCenter.default.addObserver(self, selector: #selector(itemDidFinishPlaying(_:)), name: .AVPlayerItemDidPlayToEndTime, object: playerItem)
-
     }
 }
 
 extension PlayVideoViewController: TrimmerViewDelegate {
+    func didChangeSelectedRange(to range: CMTimeRange) {
+        rangeLabel.text = String(format: "%.1f", range.duration.seconds) + "s"
+    }
 
     func willBeginChangePosition(to time: CMTime) {
         playerLayer?.player?.pause()
@@ -115,8 +111,6 @@ extension PlayVideoViewController: TrimmerViewDelegate {
 
     func didChangePosition(to time: CMTime) {
         playerLayer?.player?.seek(to: time, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero)
-        let duration = (trimmerView.endTime! - trimmerView.startTime!).seconds
-        rangeLabel.text = "\(String(format: "%.2f", duration))s"
     }
 
     func didEndChangePosition(to time: CMTime) {

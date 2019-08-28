@@ -13,6 +13,7 @@ protocol TrimmerViewDelegate: class {
     func willBeginChangePosition(to time: CMTime)
     func didChangePosition(to time: CMTime)
     func didEndChangePosition(to time: CMTime)
+    func didChangeSelectedRange(to range: CMTimeRange)
 }
 
 final class TrimmerView: UIView {
@@ -22,20 +23,19 @@ final class TrimmerView: UIView {
     private var asset: AVAsset? {
         didSet {
             assetVideoThumbnailScrollView.asset = asset
+            assetVideoThumbnailScrollView.setContentOffset(CGPoint(x: -52, y: 0), animated: false)
             guard let startTime = startTime else { return }
             delegate?.didChangePosition(to: startTime)
+            delegate?.didChangeSelectedRange(to: selectedRange)
         }
     }
 
     func changeAsset(to asset: AVAsset?) {
         self.asset = asset
+        self.minDuration = (self.asset?.duration.seconds ?? 1.0) < 1.0 ? (self.asset?.duration.seconds ?? 1.0) : 1.0
     }
 
     public var minDuration: Double = 1
-
-    public var selectedDuration: CMTime {
-        return (endTime ?? CMTime.zero) - (startTime ?? CMTime.zero)
-    }
 
     public var selectedRange: CMTimeRange {
         return CMTimeRange(start: startTime ?? CMTime.zero, end: endTime ?? CMTime.zero)
@@ -51,9 +51,9 @@ final class TrimmerView: UIView {
         return calculateTime(from: endPosition)
     }
 
-    public var positionBarTime: CMTime? {
+    public var positionBarTime: CMTime {
         let barPosition = positionBarView.center.x + assetVideoThumbnailScrollView.contentOffset.x
-        return calculateTime(from: barPosition)
+        return calculateTime(from: barPosition) ?? .zero
     }
 
     private var durationSize: CGFloat {
@@ -67,6 +67,7 @@ final class TrimmerView: UIView {
 
     private let assetVideoThumbnailScrollView: AssetVideoThumbnailScrollView = {
         let scrollView = AssetVideoThumbnailScrollView()
+        scrollView.sideInset = 104  // left: 52, right: 52
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
@@ -128,7 +129,7 @@ final class TrimmerView: UIView {
 
     private var leftMaskView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.white.withAlphaComponent(0.3)
+        view.backgroundColor = UIColor.white.withAlphaComponent(0.7)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.isUserInteractionEnabled = false
         return view
@@ -136,26 +137,28 @@ final class TrimmerView: UIView {
 
     private var rightMaskView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.white.withAlphaComponent(0.3)
+        view.backgroundColor = UIColor.white.withAlphaComponent(0.7)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.isUserInteractionEnabled = false
         return view
     }()
 
     private let handleWidth: CGFloat = 15
-    private let sideMargin: CGFloat = 37.5
+    private let sideMargin: CGFloat = 37
     private var leftHandleConstraint: NSLayoutConstraint?
     private var rightHandleConstraint: NSLayoutConstraint?
-    private var positionBarConstraint: NSLayoutConstraint?
+    private var positionBarCenterXConstraint: NSLayoutConstraint?
+    private var positionBarViewHalfWidth: CGFloat {
+        return positionBarView.frame.width / 2.0
+    }
 
     // MARK: public
     public func seek(to time: CMTime) {
         if let newPosition = calculatePosition(from: time) {
-            // 17.5 = handleWidth + positionBarView.frame.width - sideMargin
-            let offsetPosition = newPosition - assetVideoThumbnailScrollView.contentOffset.x - leftHandleView.frame.origin.x - 17.5
-            let maxPosition = rightHandleView.frame.origin.x - (leftHandleView.frame.origin.x + handleWidth) - positionBarView.frame.width
+            let offsetPosition = newPosition - assetVideoThumbnailScrollView.contentOffset.x - leftHandleView.frame.maxX
+            let maxPosition = rightHandleView.frame.origin.x - (leftHandleView.frame.maxX)
             let normalizedPosition = min(max(0, offsetPosition), maxPosition)
-            positionBarConstraint?.constant = normalizedPosition
+            positionBarCenterXConstraint?.constant = normalizedPosition
             layoutIfNeeded()
         }
     }
@@ -259,14 +262,14 @@ final class TrimmerView: UIView {
     private func configurePositionBarView() {
         addSubview(positionBarView)
 
-        let positionBarConstraint = positionBarView.leftAnchor.constraint(equalTo: leftHandleView.rightAnchor, constant: 0)
+        let positionBarCenterXConstraint = positionBarView.centerXAnchor.constraint(equalTo: leftHandleView.rightAnchor, constant: 0)
         NSLayoutConstraint.activate([
             positionBarView.heightAnchor.constraint(equalToConstant: 52),
             positionBarView.widthAnchor.constraint(equalToConstant: 5),
             positionBarView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            positionBarConstraint
+            positionBarCenterXConstraint
             ])
-        self.positionBarConstraint = positionBarConstraint
+        self.positionBarCenterXConstraint = positionBarCenterXConstraint
     }
 
     private func configureMaskViews() {
@@ -315,15 +318,14 @@ final class TrimmerView: UIView {
             } else if view == rightHandleView {
                 currentRightConstraintConstant = rightHandleConstraint?.constant ?? 0
             } else if view == positionBarView {
-                currentPositionBarConstraintConstant = positionBarConstraint?.constant ?? 0
+                currentPositionBarConstraintConstant = positionBarCenterXConstraint?.constant ?? 0
             }
 
             if #available(iOS 10.0, *) {
                 impactFeedback.impactOccurred()
             }
 
-            guard let playerTime = positionBarTime else { return }
-            delegate?.willBeginChangePosition(to: playerTime)
+            delegate?.willBeginChangePosition(to: positionBarTime)
 
         case .changed:
             let translation = recognizer.translation(in: superview)
@@ -340,12 +342,11 @@ final class TrimmerView: UIView {
             if let startTime = startTime, view == leftHandleView { seek(to: startTime) }
             else if let endTime = endTime, view == rightHandleView { seek(to: endTime) }
 
-            guard let playerTime = positionBarTime else { return }
-            delegate?.didChangePosition(to: playerTime)
+            delegate?.didChangePosition(to: positionBarTime)
+            delegate?.didChangeSelectedRange(to: selectedRange)
 
         case .cancelled, .ended, .failed:
-            guard let playerTime = positionBarTime else { return }
-            delegate?.didEndChangePosition(to: playerTime)
+            delegate?.didEndChangePosition(to: positionBarTime)
 
         default:
             return
@@ -365,8 +366,8 @@ final class TrimmerView: UIView {
     }
 
     private func updatePositionConstraint(by translation: CGPoint) {
-        let maxConstraint = rightHandleView.frame.origin.x - leftHandleView.frame.maxX - positionBarView.frame.width
-        positionBarConstraint?.constant = min(max(currentPositionBarConstraintConstant + translation.x, 0), maxConstraint)
+        let maxConstraint = rightHandleView.frame.origin.x - leftHandleView.frame.maxX
+        positionBarCenterXConstraint?.constant = min(max(currentPositionBarConstraintConstant + translation.x, 0), maxConstraint)
     }
 
     private func calculateTime(from position: CGFloat) -> CMTime? {
@@ -381,28 +382,33 @@ final class TrimmerView: UIView {
         let normalizedRatio = (CGFloat(time.value) / CGFloat(time.timescale)) * (CGFloat(asset.duration.timescale) / CGFloat(asset.duration.value))
         return normalizedRatio * durationSize
     }
+
+    func resetHandlesPosition() {
+        leftHandleConstraint?.constant = sideMargin
+        rightHandleConstraint?.constant = -sideMargin
+        layoutIfNeeded()
+        delegate?.didChangeSelectedRange(to: selectedRange)
+    }
 }
 
 extension TrimmerView: UIScrollViewDelegate {
 
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        guard let playerTime = positionBarTime else { return }
-        delegate?.willBeginChangePosition(to: playerTime)
+        delegate?.willBeginChangePosition(to: positionBarTime)
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard let playerTime = positionBarTime else { return }
-        delegate?.didChangePosition(to: playerTime)
+        delegate?.didChangePosition(to: positionBarTime)
+        delegate?.didChangeSelectedRange(to: selectedRange)
     }
 
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        guard let playerTime = positionBarTime else { return }
-        delegate?.didEndChangePosition(to: playerTime)
+        delegate?.didEndChangePosition(to: positionBarTime)
     }
 
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        guard let playerTime = positionBarTime, !decelerate else { return }
-        delegate?.didEndChangePosition(to: playerTime)
+        guard !decelerate else { return }
+        delegate?.didEndChangePosition(to: positionBarTime)
     }
 }
 
