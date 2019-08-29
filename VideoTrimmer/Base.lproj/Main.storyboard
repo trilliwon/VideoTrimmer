@@ -101,13 +101,13 @@
                                 </connections>
                             </button>
                             <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YdO-hN-Vd9">
-                                <rect key="frame" x="324" y="44" width="70" height="40"/>
+                                <rect key="frame" x="314" y="44" width="80" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="HYD-zu-pTF"/>
-                                    <constraint firstAttribute="width" constant="70" id="cla-ZZ-VRQ"/>
+                                    <constraint firstAttribute="width" constant="80" id="cla-ZZ-VRQ"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
-                                <state key="normal" title="Save">
+                                <state key="normal" title="Export">
                                     <color key="titleColor" red="0.57919406890000003" green="0.1280144453" blue="0.57268613580000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                                 <state key="disabled">
