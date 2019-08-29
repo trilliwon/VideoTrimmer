@@ -129,7 +129,7 @@ final class TrimmerView: UIView {
 
     private var leftMaskView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.white.withAlphaComponent(0.7)
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.isUserInteractionEnabled = false
         return view
@@ -137,7 +137,7 @@ final class TrimmerView: UIView {
 
     private var rightMaskView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.white.withAlphaComponent(0.7)
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.isUserInteractionEnabled = false
         return view
