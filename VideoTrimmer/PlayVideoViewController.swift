@@ -77,11 +77,13 @@ class PlayVideoViewController: UIViewController {
                 print("Export Completed...")
                 DispatchQueue.main.async {
                     self.indicator.stopAnimating()
-                    if exportSession?.status == .completed {
-                        PHPhotoLibrary.shared().performChanges({
-                            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: outputURL)
-                        }) { saved, error in
-                            if saved {
+                }
+                if exportSession?.status == .completed {
+                    PHPhotoLibrary.shared().performChanges({
+                        PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: outputURL)
+                    }) { saved, error in
+                        if saved {
+                            DispatchQueue.main.async {
                                 let alertController = UIAlertController(title: "Your video was successfully exported", message: nil, preferredStyle: .alert)
                                 let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
                                 alertController.addAction(defaultAction)

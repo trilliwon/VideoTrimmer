@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		27E22BA62325F8E1004A7B83 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E22BA52325F8E0004A7B83 /* Log.swift */; };
 		C2E8ADB221E3059500404BF5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E8ADB121E3059500404BF5 /* AppDelegate.swift */; };
 		C2E8ADB421E3059500404BF5 /* PlayVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E8ADB321E3059500404BF5 /* PlayVideoViewController.swift */; };
 		C2E8ADB721E3059500404BF5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C2E8ADB521E3059500404BF5 /* Main.storyboard */; };
@@ -29,6 +30,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		27E22BA52325F8E0004A7B83 /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		C2E8ADAE21E3059500404BF5 /* VideoTrimmer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VideoTrimmer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2E8ADB121E3059500404BF5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C2E8ADB321E3059500404BF5 /* PlayVideoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayVideoViewController.swift; sourceTree = "<group>"; };
@@ -89,6 +91,7 @@
 				C2E8ADD521E318C100404BF5 /* AssetVideoThumbnailScrollView.swift */,
 				C2E8ADD721E32F4B00404BF5 /* VideoHelper.swift */,
 				C2E8ADB521E3059500404BF5 /* Main.storyboard */,
+				27E22BA52325F8E0004A7B83 /* Log.swift */,
 				C2E8ADB821E3059600404BF5 /* Assets.xcassets */,
 				C2E8ADBA21E3059600404BF5 /* LaunchScreen.storyboard */,
 				C2E8ADBD21E3059600404BF5 /* Info.plist */,
@@ -208,6 +211,7 @@
 			files = (
 				C2E8ADB421E3059500404BF5 /* PlayVideoViewController.swift in Sources */,
 				C2E8ADB221E3059500404BF5 /* AppDelegate.swift in Sources */,
+				27E22BA62325F8E1004A7B83 /* Log.swift in Sources */,
 				C2E8ADD821E32F4B00404BF5 /* VideoHelper.swift in Sources */,
 				C2E8ADD621E318C100404BF5 /* AssetVideoThumbnailScrollView.swift in Sources */,
 				C2E8ADD221E305AF00404BF5 /* TrimmerView.swift in Sources */,
